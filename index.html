@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Under the Same Night Sky — Dyko &amp; Peyton</title>
+  <meta name="description" content="Private sanctuary for Dyko (La Fortuna) &amp; Peyton (Calgary) — presence, daily rituals, time-capsule letters, and reunion planning." />
+
+  <!-- PWA & Mobile Home Screen Meta Tags -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0B1021" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Night Sky" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+
+  <!-- Editorial Serif & Clean Humanist Sans-Serif Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            midnight: '#0B1021',
+            twilight: '#131B36',
+            navycard: '#1A2444',
+            parchment: '#F5EFE6',
+            cream: '#D6CFC2',
+            amberGold: '#E6B979',
+            candleGold: '#D49A52',
+            softGold: '#F2D5A7'
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Custom Night-Sky Theme Styles -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Supabase JS Client v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="selection:bg-amberGold/30 selection:text-softGold">
+
+  <!-- ========================================================================
+       TOAST NOTIFICATION BANNER
+       ======================================================================== -->
+  <div id="toast-container" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-md pointer-events-none flex flex-col gap-2"></div>
+
+  <!-- ========================================================================
+       PRIVATE LOGIN SCREEN (EMAIL & PASSWORD ONLY — NO PUBLIC SIGNUP)
+       ======================================================================== -->
+  <section id="auth-screen" class="min-h-[92dvh] flex flex-col items-center justify-center px-5 py-8">
+    <div class="w-full max-w-md sky-card-gold rounded-3xl p-7 sm:p-8 relative overflow-hidden">
+      <!-- Ambient Top Illustration -->
+      <div class="flex flex-col items-center text-center mb-6">
+        <div class="w-16 h-16 rounded-2xl bg-midnight/80 border border-amberGold/30 flex items-center justify-center mb-4 shadow-lg">
+          <img src="icons/icon.svg" alt="Night Sky Crest" class="w-12 h-12" />
+        </div>
+        <p class="text-[11px] uppercase tracking-[0.25em] text-amberGold/90 font-medium mb-1">
+          Calgary &bull; La Fortuna
+        </p>
+        <h1 class="font-serif-editorial text-3xl sm:text-4xl font-semibold text-parchment tracking-wide">
+          Under the Same Night Sky
+        </h1>
+        <p class="text-xs sm:text-sm text-cream/80 mt-2 max-w-xs leading-relaxed">
+          A private sanctuary exclusively for <span class="text-softGold font-medium">Peyton</span> &amp; <span class="text-softGold font-medium">Dyko</span>.
+        </p>
+      </div>
+
+      <!-- Email / Password Sign-In Form -->
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label for="login-email" class="block text-xs uppercase tracking-wider text-cream/80 mb-1.5">
+            Email Address
+          </label>
+          <input
+            id="login-email"
+            type="email"
+            required
+            autocomplete="email"
+            placeholder="dyko@... or peyton@..."
+            class="w-full rounded-xl bg-midnight/80 border border-amberGold/25 px-4 py-3 text-sm text-parchment placeholder-cream/35 focus:outline-none focus:border-amberGold transition"
+          />
+        </div>
+        <div>
+          <label for="login-password" class="block text-xs uppercase tracking-wider text-cream/80 mb-1.5">
+            Password
+          </label>
+          <input
+            id="login-password"
+            type="password"
+            required
+            autocomplete="current-password"
+            placeholder="••••••••••••"
+            class="w-full rounded-xl bg-midnight/80 border border-amberGold/25 px-4 py-3 text-sm text-parchment placeholder-cream/35 focus:outline-none focus:border-amberGold transition"
+          />
+        </div>
+
+        <div id="login-error" class="hidden rounded-xl bg-red-950/60 border border-red-400/30 px-3.5 py-2.5 text-xs text-red-200"></div>
+
+        <button
+          type="submit"
+          id="login-submit-btn"
+          class="w-full rounded-xl bg-gradient-to-r from-candleGold via-amberGold to-softGold text-midnight font-semibold text-sm py-3.5 shadow-lg shadow-amberGold/15 hover:brightness-105 active:scale-[0.99] transition"
+        >
+          Enter Our Night Sky
+        </button>
+      </form>
+
+      <!-- Private Sanctuary Notice & Interactive Preview Toggle -->
+      <div class="mt-6 pt-5 border-t border-amberGold/15 text-center">
+        <p class="text-[11px] text-cream/60 leading-relaxed">
+          Private couple sanctuary &bull; Public registration is disabled.
+        </p>
+        <div id="preview-mode-box" class="mt-3.5 bg-midnight/65 border border-amberGold/20 rounded-2xl p-3.5">
+          <p class="text-[11px] text-softGold/90 font-medium mb-2">
+            Instant Interactive Preview Mode (Local Sanctuary Sync)
+          </p>
+          <div class="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              data-preview-user="dyko"
+              class="preview-login-btn rounded-xl bg-navycard/90 hover:bg-navycard border border-amberGold/30 px-3 py-2 text-xs text-parchment font-medium transition flex items-center justify-center gap-1.5"
+            >
+              <span>🌋</span> Enter as Dyko
+            </button>
+            <button
+              type="button"
+              data-preview-user="peyton"
+              class="preview-login-btn rounded-xl bg-navycard/90 hover:bg-navycard border border-amberGold/30 px-3 py-2 text-xs text-parchment font-medium transition flex items-center justify-center gap-1.5"
+            >
+              <span>🏔️</span> Enter as Peyton
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       MAIN APPLICATION SHELL (VISIBLE WHEN AUTHENTICATED)
+       ======================================================================== -->
+  <div id="app-shell" class="hidden max-w-lg mx-auto px-3.5 sm:px-5 pt-2.5 pb-8">
+
+    <!-- ======================================================================
+         PERSISTENT TOP HEADER: "TWO WORLDS" (CALGARY & LA FORTUNA)
+         ====================================================================== -->
+    <header id="two-worlds-header" class="sky-card-gold rounded-3xl overflow-hidden mb-4 relative">
+      <!-- Top Bar: App Title, Sync Badge & Settings Gear -->
+      <div class="flex items-center justify-between px-4 pt-3.5 pb-1 relative z-10">
+        <div class="flex items-center gap-2">
+          <span class="inline-block w-2 h-2 rounded-full bg-amberGold animate-pulse" id="realtime-dot"></span>
+          <span class="font-serif-editorial italic text-base sm:text-lg text-softGold tracking-wide">
+            Under the Same Night Sky
+          </span>
+        </div>
+
+        <div class="flex items-center gap-1.5">
+          <!-- Quick Identity Pill (Click in Preview Mode to switch perspective) -->
+          <button
+            type="button"
+            id="active-user-pill"
+            title="Signed in user"
+            class="text-[11px] font-medium px-2.5 py-1 rounded-full bg-midnight/75 border border-amberGold/25 text-cream flex items-center gap-1 hover:border-amberGold/50 transition"
+          >
+            <span id="active-user-badge-name">Dyko</span>
+          </button>
+
+          <!-- Settings Modal Button -->
+          <button
+            type="button"
+            id="open-settings-btn"
+            aria-label="Open Push Notifications &amp; Account Settings"
+            class="w-8 h-8 rounded-full bg-midnight/75 border border-amberGold/25 flex items-center justify-center text-amberGold hover:bg-midnight hover:border-amberGold/50 transition"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Custom Animated SVG Night Sky Panorama: Calgary (Left) <---> La Fortuna (Right) -->
+      <div class="relative w-full h-28 sm:h-32 -mt-1 select-none">
+        <svg
+          id="night-sky-svg"
+          viewBox="0 0 420 125"
+          preserveAspectRatio="none"
+          class="w-full h-full block"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            <linearGradient id="headerArcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#E6B979" stop-opacity="0.35" />
+              <stop offset="50%" stop-color="#F2D5A7" stop-opacity="0.95" />
+              <stop offset="100%" stop-color="#E6B979" stop-opacity="0.35" />
+            </linearGradient>
+            <radialGradient id="moonHalo" cx="50%" cy="35%" r="40%">
+              <stop offset="0%" stop-color="#F2D5A7" stop-opacity="0.26" />
+              <stop offset="100%" stop-color="#0B1021" stop-opacity="0" />
+            </radialGradient>
+          </defs>
+
+          <!-- Ambient Moon Halo -->
+          <circle cx="210" cy="34" r="55" fill="url(#moonHalo)" />
+
+          <!-- Gently Twinkling Stars -->
+          <g fill="#F5EFE6">
+            <circle class="star-twinkle-1" cx="38" cy="24" r="1.3" />
+            <circle class="star-twinkle-2" cx="76" cy="16" r="1.6" />
+            <circle class="star-twinkle-3" cx="118" cy="30" r="1.1" />
+            <circle class="star-twinkle-1" cx="156" cy="14" r="1.5" />
+            <circle class="star-twinkle-2" cx="264" cy="15" r="1.5" />
+            <circle class="star-twinkle-3" cx="305" cy="28" r="1.2" />
+            <circle class="star-twinkle-1" cx="348" cy="17" r="1.6" />
+            <circle class="star-twinkle-2" cx="386" cy="26" r="1.3" />
+            <!-- 4-point sparkle stars -->
+            <path class="star-twinkle-1" d="M98 18 L99.2 21.5 L102.7 22.7 L99.2 23.9 L98 27.4 L96.8 23.9 L93.3 22.7 L96.8 21.5 Z" fill="#F2D5A7" />
+            <path class="star-twinkle-3" d="M324 18 L325.2 21.5 L328.7 22.7 L325.2 23.9 L324 27.4 L322.8 23.9 L319.3 22.7 L322.8 21.5 Z" fill="#F2D5A7" />
+          </g>
+
+          <!-- Crescent Moon at Center Zenith -->
+          <g class="moon-float">
+            <path d="M214 17 A12 12 0 1 0 226 35 A9.5 9.5 0 1 1 214 17 Z" fill="#F2D5A7" />
+          </g>
+
+          <!-- Glowing Constellation Bridge Arc (Calgary <-> La Fortuna) -->
+          <path
+            id="constellation-arc"
+            d="M 56 86 Q 210 18 364 86"
+            fill="none"
+            stroke="url(#headerArcGrad)"
+            stroke-width="1.75"
+            stroke-dasharray="4 4"
+            stroke-linecap="round"
+          />
+
+          <!-- Constellation Star Nodes -->
+          <circle class="constellation-node" cx="56" cy="86" r="2.8" fill="#F2D5A7" />
+          <circle class="constellation-node" cx="128" cy="60" r="2.1" fill="#E6B979" />
+          <circle class="constellation-node" cx="210" cy="51" r="2.8" fill="#F2D5A7" />
+          <circle class="constellation-node" cx="292" cy="60" r="2.1" fill="#E6B979" />
+          <circle class="constellation-node" cx="364" cy="86" r="2.8" fill="#F2D5A7" />
+
+          <!-- Animated Pulse Traveler Dot -->
+          <circle id="pulse-traveler" cx="210" cy="51" r="4" fill="#FFF8EB" />
+
+          <!-- LEFT HORIZON: Calgary, Canada (Snowy Rocky Mountain Peaks & Pine Trees) -->
+          <g>
+            <!-- Distant Rockies -->
+            <path d="M 0 122 L 26 84 L 48 104 L 74 74 L 106 108 L 132 94 L 168 122 Z" fill="#121B37" stroke="#E6B979" stroke-opacity="0.22" stroke-width="0.8" />
+            <!-- Snowy Caps -->
+            <path d="M 26 84 L 19 94 L 26 91 L 32 95 Z" fill="#F5EFE6" opacity="0.65" />
+            <path d="M 74 74 L 65 87 L 74 83 L 83 88 Z" fill="#F5EFE6" opacity="0.72" />
+            <!-- Pine Tree Silhouettes -->
+            <path d="M 14 122 L 18 106 L 22 122 Z M 38 122 L 43 102 L 48 122 Z M 92 122 L 96 107 L 100 122 Z" fill="#0A0F20" />
+          </g>
+
+          <!-- RIGHT HORIZON: La Fortuna, Costa Rica (Arenal Volcano & Tropical Canopy) -->
+          <g>
+            <!-- Arenal Volcano Conical Silhouette -->
+            <path d="M 252 122 L 298 98 L 329 68 L 341 68 L 372 99 L 420 122 Z" fill="#101832" stroke="#E6B979" stroke-opacity="0.25" stroke-width="0.8" />
+            <!-- Subtle Warm Crater Glow -->
+            <circle cx="335" cy="67" r="2.2" fill="#E6B979" opacity="0.85" />
+            <!-- Lush Tropical Canopy & Palm Silhouettes -->
+            <path d="M 265 122 Q 282 109 298 117 Q 315 107 334 117 Q 360 105 385 116 Q 404 106 420 116 L 420 125 L 252 125 Z" fill="#0A0F20" />
+          </g>
+
+          <!-- Bottom Horizon Merge Band -->
+          <path d="M 0 118 Q 210 110 420 118 L 420 125 L 0 125 Z" fill="#0B1021" opacity="0.92" />
+        </svg>
+
+        <!-- Pulse Sky Banner Message (appears briefly when pulse is sent/received) -->
+        <div
+          id="sky-pulse-banner"
+          class="opacity-0 pointer-events-none transition-opacity duration-500 absolute inset-x-6 top-2 flex justify-center"
+        >
+          <span
+            id="sky-pulse-banner-text"
+            class="px-3.5 py-1 rounded-full bg-midnight/90 border border-softGold/50 text-[11px] text-softGold shadow-lg"
+          >
+            ✨ Pulse sent across the stars
+          </span>
+        </div>
+      </div>
+
+      <!-- Two Worlds Live Clocks & Weather Row -->
+      <div class="grid grid-cols-2 divide-x divide-amberGold/15 bg-midnight/55 border-t border-amberGold/15 px-2 py-2.5">
+        <!-- Left: Calgary (Peyton) -->
+        <div class="px-2.5 flex flex-col">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] uppercase tracking-wider text-amberGold font-semibold">
+              Peyton &bull; Calgary
+            </span>
+            <span id="weather-calgary-box" class="text-xs text-cream/90 flex items-center gap-1" title="Live Calgary Weather">
+              <span id="weather-calgary-icon">🌙</span>
+              <span id="weather-calgary-temp">--°C</span>
+            </span>
+          </div>
+          <div class="flex items-baseline justify-between mt-0.5">
+            <span id="clock-calgary" class="font-serif-editorial text-xl sm:text-2xl font-semibold text-parchment tracking-tight">
+              --:--
+            </span>
+            <span id="weather-calgary-desc" class="text-[10px] text-cream/60 truncate max-w-[105px]">
+              Alberta, CA
+            </span>
+          </div>
+        </div>
+
+        <!-- Right: La Fortuna (Dyko) -->
+        <div class="px-2.5 flex flex-col text-right">
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-cream/90 flex items-center gap-1" title="Live La Fortuna Weather">
+              <span id="weather-lafortuna-icon">🌴</span>
+              <span id="weather-lafortuna-temp">--°C</span>
+            </span>
+            <span class="text-[11px] uppercase tracking-wider text-amberGold font-semibold">
+              Dyko &bull; La Fortuna
+            </span>
+          </div>
+          <div class="flex items-baseline justify-between mt-0.5">
+            <span id="weather-lafortuna-desc" class="text-[10px] text-cream/60 truncate max-w-[105px]">
+              Arenal, CR
+            </span>
+            <span id="clock-lafortuna" class="font-serif-editorial text-xl sm:text-2xl font-semibold text-parchment tracking-tight">
+              --:--
+            </span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ======================================================================
+         TAB 1: PRESENCE (HOME — STATUS CARDS & 2x2 SILENT PULSES)
+         ====================================================================== -->
+    <main id="tab-presence" class="tab-panel active space-y-4">
+
+      <!-- Section Heading -->
+      <div class="flex items-center justify-between px-1">
+        <div>
+          <h2 class="font-serif-editorial text-2xl font-semibold text-parchment">
+            Intimate Presence
+          </h2>
+          <p class="text-xs text-cream/70">
+            How our worlds feel right now
+          </p>
+        </div>
+        <button
+          type="button"
+          id="edit-my-status-btn"
+          class="rounded-full bg-amberGold/15 hover:bg-amberGold/25 border border-amberGold/35 px-3.5 py-1.5 text-xs text-softGold font-medium transition flex items-center gap-1.5"
+        >
+          <span>✎</span> Update My Status
+        </button>
+      </div>
+
+      <!-- Status & Social Battery Cards (Logged-in User + Partner) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="status-cards-container">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+
+      <!-- Silent Pulses (2x2 Symmetrical Grid) -->
+      <section class="sky-card p-4 sm:p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="font-serif-editorial text-xl font-semibold text-parchment">
+              Silent Pulses
+            </h3>
+            <p class="text-xs text-cream/70">
+              Tap to send a golden ripple &amp; push alert across the night sky
+            </p>
+          </div>
+          <span class="text-xs text-amberGold/80 font-serif-editorial italic">2 &times; 2</span>
+        </div>
+
+        <!-- Strictly Symmetrical 2x2 Grid of the 4 Required Pulses -->
+        <div class="grid grid-cols-2 gap-3" id="silent-pulses-grid">
+          <!-- Button 1: I miss you -->
+          <button
+            type="button"
+            data-pulse-type="miss_you"
+            data-pulse-message="I miss you"
+            class="pulse-btn p-4 text-left flex flex-col justify-between min-h-[104px] group"
+          >
+            <div class="flex items-center justify-between">
+              <span class="w-8 h-8 rounded-xl bg-amberGold/15 border border-amberGold/30 flex items-center justify-center text-base">
+                🌙
+              </span>
+              <span class="text-[10px] uppercase tracking-widest text-amberGold/60 group-hover:text-amberGold transition">
+                Send
+              </span>
+            </div>
+            <div class="mt-3">
+              <p class="font-serif-editorial text-lg font-semibold text-parchment leading-snug">
+                I miss you
+              </p>
+              <p class="text-[11px] text-cream/60 mt-0.5">
+                A quiet tug across the distance
+              </p>
+            </div>
+          </button>
+
+          <!-- Button 2: I wish I were with you -->
+          <button
+            type="button"
+            data-pulse-type="wish_with_you"
+            data-pulse-message="I wish I were with you"
+            class="pulse-btn p-4 text-left flex flex-col justify-between min-h-[104px] group"
+          >
+            <div class="flex items-center justify-between">
+              <span class="w-8 h-8 rounded-xl bg-amberGold/15 border border-amberGold/30 flex items-center justify-center text-base">
+                ✨
+              </span>
+              <span class="text-[10px] uppercase tracking-widest text-amberGold/60 group-hover:text-amberGold transition">
+                Send
+              </span>
+            </div>
+            <div class="mt-3">
+              <p class="font-serif-editorial text-lg font-semibold text-parchment leading-snug">
+                I wish I were with you
+              </p>
+              <p class="text-[11px] text-cream/60 mt-0.5">
+                Right beside you tonight
+              </p>
+            </div>
+          </button>
+
+          <!-- Button 3: Eat well & drink water -->
+          <button
+            type="button"
+            data-pulse-type="eat_drink"
+            data-pulse-message="Eat well & drink water"
+            class="pulse-btn p-4 text-left flex flex-col justify-between min-h-[104px] group"
+          >
+            <div class="flex items-center justify-between">
+              <span class="w-8 h-8 rounded-xl bg-amberGold/15 border border-amberGold/30 flex items-center justify-center text-base">
+                🍵
+              </span>
+              <span class="text-[10px] uppercase tracking-widest text-amberGold/60 group-hover:text-amberGold transition">
+                Send
+              </span>
+            </div>
+            <div class="mt-3">
+              <p class="font-serif-editorial text-lg font-semibold text-parchment leading-snug">
+                Eat well &amp; drink water
+              </p>
+              <p class="text-[11px] text-cream/60 mt-0.5">
+                Take gentle care of yourself
+              </p>
+            </div>
+          </button>
+
+          <!-- Button 4: Thinking of you -->
+          <button
+            type="button"
+            data-pulse-type="thinking_of_you"
+            data-pulse-message="Thinking of you"
+            class="pulse-btn p-4 text-left flex flex-col justify-between min-h-[104px] group"
+          >
+            <div class="flex items-center justify-between">
+              <span class="w-8 h-8 rounded-xl bg-amberGold/15 border border-amberGold/30 flex items-center justify-center text-base">
+                🕯️
+              </span>
+              <span class="text-[10px] uppercase tracking-widest text-amberGold/60 group-hover:text-amberGold transition">
+                Send
+              </span>
+            </div>
+            <div class="mt-3">
+              <p class="font-serif-editorial text-lg font-semibold text-parchment leading-snug">
+                Thinking of you
+              </p>
+              <p class="text-[11px] text-cream/60 mt-0.5">
+                You crossed my mind right now
+              </p>
+            </div>
+          </button>
+        </div>
+
+        <!-- Discreet Last Pulse Log -->
+        <div class="mt-3.5 pt-3 border-t border-amberGold/15 flex items-center justify-between text-xs text-cream/75">
+          <div class="flex items-center gap-2 truncate">
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-amberGold"></span>
+            <span id="last-pulse-log" class="truncate italic font-serif-editorial text-sm text-softGold/90">
+              No pulses sent yet tonight — tap any card above
+            </span>
+          </div>
+          <span id="last-pulse-time" class="text-[11px] text-cream/55 shrink-0 ml-2"></span>
+        </div>
+      </section>
+    </main>
+
+    <!-- ======================================================================
+         TAB 2: DAILY (LOCKED DAILY QUESTION & SEALED ENVELOPE MECHANIC)
+         ====================================================================== -->
+    <main id="tab-daily" class="tab-panel space-y-4">
+      <div class="flex items-center justify-between px-1">
+        <div>
+          <h2 class="font-serif-editorial text-2xl font-semibold text-parchment">
+            Nightly Ritual
+          </h2>
+          <p class="text-xs text-cream/70">
+            Both answers must be written before today's wax seal breaks
+          </p>
+        </div>
+        <button
+          type="button"
+          id="open-past-questions-btn"
+          class="rounded-full bg-midnight/80 hover:bg-navycard border border-amberGold/30 px-3.5 py-1.5 text-xs text-softGold font-medium transition flex items-center gap-1.5"
+        >
+          <span>📜</span> All 30 Days
+        </button>
+      </div>
+
+      <!-- Today's Curated Question Card -->
+      <section class="sky-card-gold p-5 sm:p-6 relative overflow-hidden">
+        <div class="flex items-center justify-between mb-3">
+          <span
+            id="daily-question-day-badge"
+            class="px-3 py-1 rounded-full bg-amberGold/15 border border-amberGold/30 text-[11px] uppercase tracking-widest text-softGold font-medium"
+          >
+            Day 1 of 30
+          </span>
+          <span
+            id="daily-question-category"
+            class="text-xs font-serif-editorial italic text-amberGold"
+          >
+            Our First Two Nights
+          </span>
+        </div>
+
+        <blockquote
+          id="daily-question-prompt"
+          class="font-serif-editorial text-xl sm:text-2xl text-parchment leading-relaxed font-medium my-2"
+        >
+          Loading today's question...
+        </blockquote>
+
+        <!-- Day Navigation Stepper -->
+        <div class="mt-4 pt-3 border-t border-amberGold/15 flex items-center justify-between text-xs text-cream/70">
+          <button
+            type="button"
+            id="prev-question-btn"
+            class="hover:text-softGold transition flex items-center gap-1 disabled:opacity-35"
+          >
+            &larr; Previous Day
+          </button>
+          <span id="daily-seal-status-pill" class="text-[11px] text-amberGold">
+            🕯️ Sealed Ritual
+          </span>
+          <button
+            type="button"
+            id="next-question-btn"
+            class="hover:text-softGold transition flex items-center gap-1 disabled:opacity-35"
+          >
+            Next Day &rarr;
+          </button>
+        </div>
+      </section>
+
+      <!-- Answer Composer / Sealed or Unsealed Envelopes Container -->
+      <div id="daily-answers-area" class="space-y-3.5">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </main>
+
+    <!-- ======================================================================
+         TAB 3: LETTERS (TIME CAPSULES & "OPEN WHEN..." ENVELOPES)
+         ====================================================================== -->
+    <main id="tab-letters" class="tab-panel space-y-4">
+      <div class="flex items-center justify-between px-1">
+        <div>
+          <h2 class="font-serif-editorial text-2xl font-semibold text-parchment">
+            Time-Capsule Letters
+          </h2>
+          <p class="text-xs text-cream/70">
+            Sealed words for future dates &amp; quiet moments
+          </p>
+        </div>
+        <button
+          type="button"
+          id="open-letter-composer-btn"
+          class="rounded-full bg-gradient-to-r from-candleGold to-amberGold text-midnight font-semibold px-4 py-1.5 text-xs shadow-md hover:brightness-105 transition flex items-center gap-1.5"
+        >
+          <span>✒️</span> Write Letter
+        </button>
+      </div>
+
+      <!-- Filter Pills -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1">
+        <button
+          type="button"
+          data-letter-filter="all"
+          class="letter-filter-btn active px-3.5 py-1.5 rounded-full text-xs font-medium bg-amberGold/20 border border-amberGold/45 text-softGold transition"
+        >
+          All Capsules
+        </button>
+        <button
+          type="button"
+          data-letter-filter="received"
+          class="letter-filter-btn px-3.5 py-1.5 rounded-full text-xs font-medium bg-midnight/60 border border-amberGold/20 text-cream/75 hover:text-parchment transition"
+        >
+          For You
+        </button>
+        <button
+          type="button"
+          data-letter-filter="sent"
+          class="letter-filter-btn px-3.5 py-1.5 rounded-full text-xs font-medium bg-midnight/60 border border-amberGold/20 text-cream/75 hover:text-parchment transition"
+        >
+          Written by You
+        </button>
+      </div>
+
+      <!-- Letters List -->
+      <div id="letters-list-container" class="space-y-3">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </main>
+
+    <!-- ======================================================================
+         TAB 4: PLANS (REUNION COUNTDOWN, SAVINGS, BUCKET LIST & DATE WHEEL)
+         ====================================================================== -->
+    <main id="tab-plans" class="tab-panel space-y-4">
+
+      <!-- 1. Reunion Countdown Card -->
+      <section class="sky-card-gold p-5 relative overflow-hidden">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <span class="text-[10px] uppercase tracking-[0.22em] text-amberGold font-semibold">
+              Our Next Horizon
+            </span>
+            <h2
+              id="reunion-title-display"
+              class="font-serif-editorial text-2xl sm:text-3xl font-semibold text-parchment mt-0.5"
+            >
+              Until our first real reunion
+            </h2>
+            <p id="reunion-location-display" class="text-xs text-cream/75 mt-0.5">
+              📍 Under the same night sky
+            </p>
+          </div>
+          <button
+            type="button"
+            id="edit-reunion-btn"
+            class="rounded-full bg-midnight/75 hover:bg-midnight border border-amberGold/30 px-3 py-1 text-[11px] text-softGold transition shrink-0"
+          >
+            ✎ Edit
+          </button>
+        </div>
+
+        <!-- Live Countdown Grid: Days / Hours / Minutes / Seconds -->
+        <div class="grid grid-cols-4 gap-2.5 mt-4 text-center">
+          <div class="rounded-2xl bg-midnight/75 border border-amberGold/25 py-3 px-2">
+            <span id="cd-days" class="font-serif-editorial text-2xl sm:text-3xl font-bold text-softGold block leading-none">
+              42
+            </span>
+            <span class="text-[10px] uppercase tracking-wider text-cream/65 mt-1 block">
+              Days
+            </span>
+          </div>
+          <div class="rounded-2xl bg-midnight/75 border border-amberGold/25 py-3 px-2">
+            <span id="cd-hours" class="font-serif-editorial text-2xl sm:text-3xl font-bold text-parchment block leading-none">
+              14
+            </span>
+            <span class="text-[10px] uppercase tracking-wider text-cream/65 mt-1 block">
+              Hours
+            </span>
+          </div>
+          <div class="rounded-2xl bg-midnight/75 border border-amberGold/25 py-3 px-2">
+            <span id="cd-minutes" class="font-serif-editorial text-2xl sm:text-3xl font-bold text-parchment block leading-none">
+              28
+            </span>
+            <span class="text-[10px] uppercase tracking-wider text-cream/65 mt-1 block">
+              Minutes
+            </span>
+          </div>
+          <div class="rounded-2xl bg-midnight/75 border border-amberGold/25 py-3 px-2">
+            <span id="cd-seconds" class="font-serif-editorial text-2xl sm:text-3xl font-bold text-amberGold block leading-none">
+              09
+            </span>
+            <span class="text-[10px] uppercase tracking-wider text-cream/65 mt-1 block">
+              Seconds
+            </span>
+          </div>
+        </div>
+
+        <p id="reunion-target-date-label" class="text-[11px] text-center text-cream/60 mt-3">
+          Target date loading...
+        </p>
+      </section>
+
+      <!-- 2. Shared Reunion Savings Tracker -->
+      <section class="sky-card p-4 sm:p-5">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <h3 class="font-serif-editorial text-xl font-semibold text-parchment">
+              Shared Reunion Fund
+            </h3>
+            <p class="text-xs text-cream/70">
+              Saving together for flights &amp; our first trip as a couple
+            </p>
+          </div>
+          <button
+            type="button"
+            id="edit-savings-btn"
+            class="rounded-full bg-amberGold/15 hover:bg-amberGold/25 border border-amberGold/30 px-3 py-1 text-xs text-softGold transition"
+          >
+            + Update Fund
+          </button>
+        </div>
+
+        <div class="mt-3">
+          <div class="flex items-baseline justify-between text-sm mb-1.5">
+            <span id="savings-amount-label" class="font-serif-editorial text-xl font-semibold text-softGold">
+              $540 / $1,800 USD
+            </span>
+            <span id="savings-percent-label" class="text-xs text-amberGold font-medium">
+              30% saved
+            </span>
+          </div>
+          <div class="battery-track h-3">
+            <div id="savings-progress-bar" class="battery-fill" style="width: 30%"></div>
+          </div>
+          <div class="grid grid-cols-2 gap-2 mt-3 text-xs">
+            <div class="rounded-xl bg-midnight/60 border border-amberGold/15 px-3 py-2 flex items-center justify-between">
+              <span class="text-cream/75">🌋 Dyko</span>
+              <span id="savings-dyko-display" class="font-medium text-parchment">$270</span>
+            </div>
+            <div class="rounded-xl bg-midnight/60 border border-amberGold/15 px-3 py-2 flex items-center justify-between">
+              <span class="text-cream/75">🏔️ Peyton</span>
+              <span id="savings-peyton-display" class="font-medium text-parchment">$270</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Long-Distance Date Wheel (Interactive Roulette Spinner) -->
+      <section class="sky-card p-4 sm:p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="font-serif-editorial text-xl font-semibold text-parchment">
+              Long-Distance Date Wheel
+            </h3>
+            <p class="text-xs text-cream/70">
+              Spin the night-sky roulette for tonight's date across timezones
+            </p>
+          </div>
+          <button
+            type="button"
+            id="spin-wheel-btn"
+            class="rounded-full bg-gradient-to-r from-candleGold via-amberGold to-softGold text-midnight font-semibold px-4 py-1.5 text-xs shadow-md hover:brightness-105 active:scale-95 transition"
+          >
+            ✨ Spin Wheel
+          </button>
+        </div>
+
+        <!-- Illustrated SVG Roulette Wheel -->
+        <div class="relative flex flex-col items-center my-2">
+          <!-- Top Golden Pointer Arrow -->
+          <div class="z-10 -mb-2.5 text-softGold drop-shadow">
+            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="#F2D5A7">
+              <path d="M12 22L4 6h16l-8 16z" stroke="#0B1021" stroke-width="1.5" />
+            </svg>
+          </div>
+
+          <div class="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center">
+            <svg
+              id="date-wheel-rotor"
+              viewBox="0 0 260 260"
+              class="w-full h-full drop-shadow-2xl"
+            >
+              <!-- Rendered dynamically by app.js -->
+            </svg>
+            <!-- Center Cap Button -->
+            <button
+              type="button"
+              id="wheel-center-spin-btn"
+              aria-label="Spin Date Wheel"
+              class="absolute w-14 h-14 rounded-full bg-midnight border-2 border-softGold shadow-lg flex items-center justify-center font-serif-editorial text-xs font-semibold text-softGold hover:scale-105 active:scale-95 transition"
+            >
+              SPIN
+            </button>
+          </div>
+
+          <!-- Selected Date Idea Banner -->
+          <div
+            id="wheel-result-banner"
+            class="mt-3 w-full rounded-2xl bg-midnight/80 border border-amberGold/35 px-4 py-3 text-center"
+          >
+            <p class="text-[10px] uppercase tracking-widest text-amberGold">
+              Tonight's Constellation Pick
+            </p>
+            <p id="wheel-result-title" class="font-serif-editorial text-lg sm:text-xl font-semibold text-parchment mt-0.5">
+              Tap "Spin Wheel" to choose a date idea
+            </p>
+          </div>
+        </div>
+
+        <!-- Add / Manage Date Wheel Ideas -->
+        <form id="add-date-idea-form" class="mt-3 flex gap-2">
+          <input
+            id="new-date-idea-input"
+            type="text"
+            maxlength="70"
+            placeholder="Add a long-distance date idea..."
+            class="flex-1 rounded-xl bg-midnight/75 border border-amberGold/25 px-3.5 py-2 text-xs text-parchment placeholder-cream/40 focus:outline-none focus:border-amberGold"
+          />
+          <button
+            type="submit"
+            class="rounded-xl bg-amberGold/20 hover:bg-amberGold/30 border border-amberGold/40 px-3.5 py-2 text-xs text-softGold font-medium transition shrink-0"
+          >
+            + Add
+          </button>
+        </form>
+
+        <!-- Date Ideas Chips List -->
+        <div id="date-ideas-chips" class="flex flex-wrap gap-1.5 mt-3">
+          <!-- Rendered dynamically by app.js -->
+        </div>
+      </section>
+
+      <!-- 4. "Things We Haven't Done Yet" (Shared Bucket List) -->
+      <section class="sky-card p-4 sm:p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="font-serif-editorial text-xl font-semibold text-parchment">
+              Things We Haven't Done Yet
+            </h3>
+            <p class="text-xs text-cream/70">
+              Our shared checklist of firsts waiting for us
+            </p>
+          </div>
+          <span id="bucket-progress-badge" class="text-xs text-amberGold font-medium">
+            0 / 6
+          </span>
+        </div>
+
+        <!-- Add Bucket List Idea Form -->
+        <form id="add-bucket-form" class="flex gap-2 mb-3.5">
+          <input
+            id="new-bucket-title"
+            type="text"
+            maxlength="110"
+            required
+            placeholder="Add something we haven't done together yet..."
+            class="flex-1 rounded-xl bg-midnight/75 border border-amberGold/25 px-3.5 py-2.5 text-xs text-parchment placeholder-cream/40 focus:outline-none focus:border-amberGold"
+          />
+          <select
+            id="new-bucket-category"
+            class="rounded-xl bg-midnight/75 border border-amberGold/25 px-2.5 py-2.5 text-xs text-cream focus:outline-none focus:border-amberGold"
+          >
+            <option value="Reunion">Reunion</option>
+            <option value="Night Out">Night Out</option>
+            <option value="Cozy">Cozy</option>
+            <option value="Adventure">Adventure</option>
+          </select>
+          <button
+            type="submit"
+            class="rounded-xl bg-gradient-to-r from-candleGold to-amberGold text-midnight font-semibold px-3.5 py-2.5 text-xs hover:brightness-105 transition shrink-0"
+          >
+            Add
+          </button>
+        </form>
+
+        <!-- Bucket List Items -->
+        <div id="bucket-list-container" class="space-y-2">
+          <!-- Rendered dynamically by app.js -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ========================================================================
+       FIXED BOTTOM NAVIGATION BAR (4 TABS)
+       ======================================================================== -->
+  <nav id="bottom-nav" class="bottom-nav hidden">
+    <div class="max-w-lg mx-auto grid grid-cols-4 h-16">
+      <button
+        type="button"
+        data-tab-target="presence"
+        class="nav-tab-btn active flex flex-col items-center justify-center gap-1"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+        </svg>
+        <span class="text-[11px] font-medium">Presence</span>
+      </button>
+
+      <button
+        type="button"
+        data-tab-target="daily"
+        class="nav-tab-btn flex flex-col items-center justify-center gap-1"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+        <span class="text-[11px] font-medium">Daily</span>
+      </button>
+
+      <button
+        type="button"
+        data-tab-target="letters"
+        class="nav-tab-btn flex flex-col items-center justify-center gap-1"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+        <span class="text-[11px] font-medium">Letters</span>
+      </button>
+
+      <button
+        type="button"
+        data-tab-target="plans"
+        class="nav-tab-btn flex flex-col items-center justify-center gap-1"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <span class="text-[11px] font-medium">Plans</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ========================================================================
+       MODAL 1: EDIT MY STATUS & SOCIAL BATTERY
+       ======================================================================== -->
+  <div id="status-modal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-3">
+    <div class="w-full max-w-md sky-card-gold rounded-3xl p-6 animate-unseal">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-serif-editorial text-2xl font-semibold text-parchment">
+          Update Your Presence
+        </h3>
+        <button type="button" data-close-modal="status-modal" class="text-cream/60 hover:text-parchment text-lg px-2">
+          &times;
+        </button>
+      </div>
+
+      <form id="status-form" class="space-y-4">
+        <!-- Social Battery Slider -->
+        <div>
+          <div class="flex items-center justify-between text-xs mb-2">
+            <span class="uppercase tracking-wider text-cream/80">Social Battery</span>
+            <span id="status-battery-value" class="font-serif-editorial text-xl font-semibold text-softGold">85%</span>
+          </div>
+          <input
+            id="status-battery-input"
+            type="range"
+            min="0"
+            max="100"
+            step="1"
+            value="85"
+            class="gold-slider"
+          />
+          <div class="flex justify-between text-[10px] text-cream/50 mt-1">
+            <span>0% Recharging quietly</span>
+            <span>50% Gentle energy</span>
+            <span>100% Full glow</span>
+          </div>
+        </div>
+
+        <!-- Current Mood / Mode Preset Options -->
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-cream/80 mb-2">
+            Current Mood / Mode
+          </label>
+          <div class="grid grid-cols-1 gap-2" id="mood-preset-group">
+            <label class="flex items-center gap-2.5 rounded-xl bg-midnight/75 border border-amberGold/25 px-3.5 py-2.5 cursor-pointer hover:border-amberGold/50 transition">
+              <input type="radio" name="mood" value="Up for a call" class="accent-amberGold" />
+              <span class="text-xs text-parchment">📞 Up for a call</span>
+            </label>
+            <label class="flex items-center gap-2.5 rounded-xl bg-midnight/75 border border-amberGold/25 px-3.5 py-2.5 cursor-pointer hover:border-amberGold/50 transition">
+              <input type="radio" name="mood" value="Working, text only" class="accent-amberGold" />
+              <span class="text-xs text-parchment">💻 Working, text only</span>
+            </label>
+            <label class="flex items-center gap-2.5 rounded-xl bg-midnight/75 border border-amberGold/25 px-3.5 py-2.5 cursor-pointer hover:border-amberGold/50 transition">
+              <input type="radio" name="mood" value="Resting / recharging" class="accent-amberGold" />
+              <span class="text-xs text-parchment">🌙 Resting / recharging</span>
+            </label>
+            <label class="flex items-center gap-2.5 rounded-xl bg-midnight/75 border border-amberGold/25 px-3.5 py-2.5 cursor-pointer hover:border-amberGold/50 transition">
+              <input type="radio" name="mood" value="Missing you" class="accent-amberGold" />
+              <span class="text-xs text-parchment">✨ Missing you</span>
+            </label>
+            <label class="flex items-center gap-2.5 rounded-xl bg-midnight/75 border border-amberGold/25 px-3.5 py-2.5 cursor-pointer hover:border-amberGold/50 transition">
+              <input type="radio" name="mood" value="Out & about" class="accent-amberGold" />
+              <span class="text-xs text-parchment">🌿 Out &amp; about</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Optional 1-Line Status Note (max 100 chars) -->
+        <div>
+          <div class="flex items-center justify-between text-xs mb-1.5">
+            <label for="status-note-input" class="uppercase tracking-wider text-cream/80">Short Note</label>
+            <span id="status-note-count" class="text-[11px] text-cream/50">0 / 100</span>
+          </div>
+          <input
+            id="status-note-input"
+            type="text"
+            maxlength="100"
+            placeholder="What's around you right now?"
+            class="w-full rounded-xl bg-midnight/80 border border-amberGold/25 px-3.5 py-2.5 text-xs text-parchment placeholder-cream/40 focus:outline-none focus:border-amberGold"
+          />
+        </div>
+
+        <div class="flex gap-2.5 pt-2">
+          <button
+            type="button"
+            data-close-modal="status-modal"
+            class="flex-1 rounded-xl bg-midnight/80 border border-amberGold/25 py-2.5 text-xs text-cream"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="flex-1 rounded-xl bg-gradient-to-r from-candleGold to-amberGold text-midnight font-semibold py-2.5 text-xs shadow-md"
+          >
+            Save Presence
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 2: PAST QUESTIONS DRAWER (ALL 30 DAYS)
+       ======================================================================== -->
+  <div id="past-questions-modal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-3">
+    <div class="w-full max-w-md sky-card-gold rounded-3xl p-5 max-h-[82dvh] flex flex-col animate-unseal">
+      <div class="flex items-center justify-between pb-3 border-b border-amberGold/15">
+        <div>
+          <h3 class="font-serif-editorial text-2xl font-semibold text-parchment">
+            30 Nights of Questions
+          </h3>
+          <p class="text-xs text-cream/70">
+            Revisit unlocked rituals or jump to any day
+          </p>
+        </div>
+        <button type="button" data-close-modal="past-questions-modal" class="text-cream/60 hover:text-parchment text-lg px-2">
+          &times;
+        </button>
+      </div>
+      <div id="past-questions-list" class="overflow-y-auto space-y-2 py-3 pr-1">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 3: COMPOSE NEW TIME-CAPSULE LETTER
+       ======================================================================== -->
+  <div id="letter-composer-modal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-3">
+    <div class="w-full max-w-md sky-card-gold rounded-3xl p-6 max-h-[90dvh] overflow-y-auto animate-unseal">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="font-serif-editorial text-2xl font-semibold text-parchment">
+            Seal a Time-Capsule Letter
+          </h3>
+          <p id="letter-recipient-subtitle" class="text-xs text-amberGold">
+            For your partner under the stars
+          </p>
+        </div>
+        <button type="button" data-close-modal="letter-composer-modal" class="text-cream/60 hover:text-parchment text-lg px-2">
+          &times;
+        </button>
+      </div>
+
+      <form id="letter-composer-form" class="space-y-4">
+        <div>
+          <label for="letter-title-input" class="block text-xs uppercase tracking-wider text-cream/80 mb-1.5">
+            Envelope Title
+          </label>
+          <input
+            id="letter-title-input"
+            type="text"
+            required
+            maxlength="90"
+            placeholder="e.g., For the night before our flights..."
+            class="w-full rounded-xl bg-midnight/80 border border-amberGold/25 px-3.5 py-2.5 text-xs text-parchment placeholder-cream/40 focus:outline-none focus:border-amberGold"
+          />
+        </div>
+
+        <!-- Unlock Condition Type -->
+        <div>
+          <label class="block text-xs uppercase tracking-wider text-cream/80 mb-1.5">
+            Wax Seal Condition
+          </label>
+          <div class="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              data-unlock-type="moment"
+              class="unlock-type-btn active rounded-xl bg-amberGold/20 border border-amberGold/50 px-3 py-2.5 text-xs text-softGold font-medium text-left"
+            >
+              🕯️ "Open When..."
+              <span class="block text-[10px] text-cream/70 font-normal mt-0.5">Manual seal break</span>
+            </button>
+            <button
+              type="button"
+              data-unlock-type="date"
+              class="unlock-type-btn rounded-xl bg-midnight/75 border border-amberGold/20 px-3 py-2.5 text-xs text-cream text-left"
+            >
+              ⏳ Date-Locked
+              <span class="block text-[10px] text-cream/70 font-normal mt-0.5">Unseals on future date</span>
+            </button>
+          </div>
+          <input type="hidden" id="letter-unlock-type" value="moment" />
+        </div>
+
+        <!-- "Open When..." Trigger Selector -->
+        <div id="letter-moment-field">
+          <label for="letter-moment-input" class="block text-xs uppercase tracking-wider text-cream/80 mb-1.5">
+            "Open When..." Moment Prompt
+          </label>
+          <input
+            id="letter-moment-input"
+            type="text"
+            list="moment-suggestions"
+            placeholder="Open when the distance feels heavy"
+            value="Open when the distance feels heavy"
+            class="w-full rounded-xl bg-midnight/80 border border-amberGold/25 px-3.5 py-2.5 text-xs text-parchment placeholder-cream/40 focus:outline-none focus:border-amberGold"
+          />
+          <datalist id="moment-suggestions">
+            <option value="Open when the distance feels heavy"></option>
+            <option value="Open on a hard day"></option>
+            <option value="Open when you can't fall asleep"></option>
+            <option value="Open when you're thinking about our first two night dates"></option>
+            <option value="Open at the airport before boarding"></option>
+          </datalist>
+        </div>
+
+        <!-- Future Unlock Date Picker -->
+        <div id="letter-date-field" class="hidden">
+          <label for="letter-date-input" class="block text-xs uppercase tracking-wider text-cream/80 mb-1.5">
+            Unseal Date &amp; Time
+          </label>
+          <input
+            id="letter-date-input"
+            type="datetime-local"
+            class="w-full rounded-xl bg-midnight/80 border border-amberGold/25 px-3.5 py-2.5 text-xs text-parchment focus:outline-none focus:border-amberGold"
+          />
+        </div>
+
+        <!-- Letter Body -->
+        <div>
+          <label for="letter-body-input" class="block text-xs uppercase tracking-wider text-cream/80 mb-1.5">
+            Your Letter
+          </label>
+          <textarea
+            id="letter-body-input"
+            rows="6"
+            required
+            placeholder="Write from the heart..."
+            class="w-full rounded-2xl bg-midnight/80 border border-amberGold/25 p-3.5 text-sm font-serif-editorial text-parchment placeholder-cream/40 focus:outline-none focus:border-amberGold leading-relaxed"
+          ></textarea>
+        </div>
+
+        <div class="flex gap-2.5 pt-1">
+          <button
+            type="button"
+            data-close-modal="letter-composer-modal"
+            class="flex-1 rounded-xl bg-midnight/80 border border-amberGold/25 py-2.5 text-xs text-cream"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="flex-1 rounded-xl bg-gradient-to-r from-candleGold to-amberGold text-midnight font-semibold py-2.5 text-xs shadow-md"
+          >
+            Seal &amp; Send Capsule
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 4: PARCHMENT LETTER READING VIEW
+       ======================================================================== -->
+  <div id="letter-reader-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-md parchment-surface rounded-3xl p-6 sm:p-7 max-h-[88dvh] overflow-y-auto animate-unseal relative">
+      <div class="flex items-start justify-between gap-3 pb-4 border-b border-amberGold/20">
+        <div>
+          <span id="reader-meta-badge" class="text-[10px] uppercase tracking-[0.2em] text-amberGold font-semibold">
+            Unsealed Time Capsule
+          </span>
+          <h3 id="reader-title" class="font-serif-editorial text-2xl sm:text-3xl font-semibold text-parchment mt-1">
+            Letter Title
+          </h3>
+          <p id="reader-subtitle" class="text-xs text-cream/70 mt-0.5">
+            From Dyko &bull; Sealed under the stars
+          </p>
+        </div>
+        <button type="button" data-close-modal="letter-reader-modal" class="text-cream/60 hover:text-parchment text-xl px-2">
+          &times;
+        </button>
+      </div>
+
+      <div
+        id="reader-body"
+        class="font-serif-editorial text-lg sm:text-xl text-parchment/95 leading-relaxed whitespace-pre-line py-5"
+      ></div>
+
+      <div class="pt-4 border-t border-amberGold/20 flex items-center justify-between text-xs text-cream/65">
+        <span id="reader-condition-note" class="italic font-serif-editorial text-sm text-softGold"></span>
+        <button
+          type="button"
+          data-close-modal="letter-reader-modal"
+          class="rounded-full bg-amberGold/20 hover:bg-amberGold/30 border border-amberGold/40 px-4 py-1.5 text-xs text-softGold font-medium transition"
+        >
+          Close Letter
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 5: EDIT REUNION COUNTDOWN & SHARED SAVINGS
+       ======================================================================== -->
+  <div id="reunion-modal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-3">
+    <div class="w-full max-w-md sky-card-gold rounded-3xl p-6 max-h-[90dvh] overflow-y-auto animate-unseal">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-serif-editorial text-2xl font-semibold text-parchment">
+          Reunion &amp; Savings Plan
+        </h3>
+        <button type="button" data-close-modal="reunion-modal" class="text-cream/60 hover:text-parchment text-lg px-2">
+          &times;
+        </button>
+      </div>
+
+      <form id="reunion-form" class="space-y-3.5">
+        <div>
+          <label for="reunion-title-input" class="block text-xs uppercase tracking-wider text-cream/80 mb-1">
+            Countdown Title
+          </label>
+          <input
+            id="reunion-title-input"
+            type="text"
+            required
+            maxlength="70"
+            class="w-full rounded-xl bg-midnight/80 border border-amberGold/25 px-3.5 py-2.5 text-xs text-parchment focus:outline-none focus:border-amberGold"
+          />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label for="reunion-date-input" class="block text-xs uppercase tracking-wider text-cream/80 mb-1">
+              Target Date &amp; Time
+            </label>
+            <input
+              id="reunion-date-input"
+              type="datetime-local"
+              required
+              class="w-full rounded-xl bg-midnight/80 border border-amberGold/25 px-3.5 py-2.5 text-xs text-parchment focus:outline-none focus:border-amberGold"
+            />
+          </div>
+          <div>
+            <label for="reunion-location-input" class="block text-xs uppercase tracking-wider text-cream/80 mb-1">
+              Meeting Destination
+            </label>
+            <input
+              id="reunion-location-input"
+              type="text"
+              maxlength="60"
+              placeholder="Calgary, La Fortuna, or halfway..."
+              class="w-full rounded-xl bg-midnight/80 border border-amberGold/25 px-3.5 py-2.5 text-xs text-parchment focus:outline-none focus:border-amberGold"
+            />
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-amberGold/15">
+          <p class="text-xs font-medium text-softGold mb-2">
+            Shared Reunion Savings Tracker (USD)
+          </p>
+          <div class="grid grid-cols-3 gap-2.5">
+            <div>
+              <label for="savings-goal-input" class="block text-[10px] uppercase tracking-wider text-cream/70 mb-1">
+                Goal ($)
+              </label>
+              <input
+                id="savings-goal-input"
+                type="number"
+                min="0"
+                step="10"
+                required
+                class="w-full rounded-xl bg-midnight/80 border border-amberGold/25 px-3 py-2 text-xs text-parchment"
+              />
+            </div>
+            <div>
+              <label for="savings-dyko-input" class="block text-[10px] uppercase tracking-wider text-cream/70 mb-1">
+                Dyko ($)
+              </label>
+              <input
+                id="savings-dyko-input"
+                type="number"
+                min="0"
+                step="5"
+                required
+                class="w-full rounded-xl bg-midnight/80 border border-amberGold/25 px-3 py-2 text-xs text-parchment"
+              />
+            </div>
+            <div>
+              <label for="savings-peyton-input" class="block text-[10px] uppercase tracking-wider text-cream/70 mb-1">
+                Peyton ($)
+              </label>
+              <input
+                id="savings-peyton-input"
+                type="number"
+                min="0"
+                step="5"
+                required
+                class="w-full rounded-xl bg-midnight/80 border border-amberGold/25 px-3 py-2 text-xs text-parchment"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-2.5 pt-2">
+          <button
+            type="button"
+            data-close-modal="reunion-modal"
+            class="flex-1 rounded-xl bg-midnight/80 border border-amberGold/25 py-2.5 text-xs text-cream"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="flex-1 rounded-xl bg-gradient-to-r from-candleGold to-amberGold text-midnight font-semibold py-2.5 text-xs shadow-md"
+          >
+            Save Reunion Plan
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 6: SETTINGS, WEB PUSH NOTIFICATIONS & iOS / HUAWEI SETUP GUIDE
+       ======================================================================== -->
+  <div id="settings-modal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-end sm:items-center justify-center p-3">
+    <div class="w-full max-w-md sky-card-gold rounded-3xl p-6 max-h-[90dvh] overflow-y-auto animate-unseal space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="font-serif-editorial text-2xl font-semibold text-parchment">
+            Night Sky Settings &amp; Push
+          </h3>
+          <p id="settings-account-label" class="text-xs text-amberGold">
+            Signed in as Dyko (La Fortuna)
+          </p>
+        </div>
+        <button type="button" data-close-modal="settings-modal" class="text-cream/60 hover:text-parchment text-lg px-2">
+          &times;
+        </button>
+      </div>
+
+      <!-- Push Notifications Control Box -->
+      <div class="rounded-2xl bg-midnight/75 border border-amberGold/25 p-4 space-y-3">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-xs font-semibold text-parchment">
+              Real-Time Web Push Notifications
+            </p>
+            <p id="push-status-text" class="text-[11px] text-cream/70 mt-0.5">
+              Checking device notification status...
+            </p>
+          </div>
+          <span id="push-status-dot" class="w-2.5 h-2.5 rounded-full bg-amberGold/50"></span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            id="enable-push-btn"
+            class="rounded-xl bg-gradient-to-r from-candleGold to-amberGold text-midnight font-semibold py-2.5 px-3 text-xs shadow hover:brightness-105 transition"
+          >
+            🔔 Enable Push
+          </button>
+          <button
+            type="button"
+            id="test-push-btn"
+            class="rounded-xl bg-navycard hover:bg-navycard/80 border border-amberGold/30 text-softGold font-medium py-2.5 px-3 text-xs transition"
+          >
+            ✨ Send Test Push
+          </button>
+        </div>
+      </div>
+
+      <!-- iOS Safari (16.4+) & Huawei (Firefox) Home Screen Setup Guide -->
+      <div class="rounded-2xl bg-midnight/60 border border-amberGold/20 p-4 space-y-2.5 text-xs">
+        <p class="font-serif-editorial text-base font-semibold text-softGold">
+          📱 Mobile Setup Guide (iPhone &amp; Huawei)
+        </p>
+        <div class="space-y-2 text-[11px] text-cream/80 leading-relaxed">
+          <p>
+            <strong class="text-parchment">For Peyton / iPhone (iOS 16.4+ Safari):</strong>
+            Open this URL in <span class="text-softGold">Safari</span> &rarr; tap the <span class="text-softGold">Share</span> icon at the bottom &rarr; select <span class="text-softGold">"Add to Home Screen"</span>. Launch the app from your Home Screen icon, then tap <em>Enable Push</em> above.
+          </p>
+          <p>
+            <strong class="text-parchment">For Dyko / Huawei (No Google Play Services):</strong>
+            Install <span class="text-softGold">Firefox for Android</span> (or use Huawei Browser) &rarr; tap the menu (&vellip;) &rarr; <span class="text-softGold">"Add app to Home screen"</span>. Tap <em>Enable Push</em> above and allow notifications (Firefox uses Mozilla Push Service natively without needing GMS).
+          </p>
+        </div>
+      </div>
+
+      <!-- Perspective Switcher (Visible in Local Preview Mode) -->
+      <div id="preview-switcher-section" class="rounded-2xl bg-midnight/60 border border-amberGold/20 p-3.5">
+        <p class="text-[11px] text-amberGold font-medium mb-2">
+          Switch Partner Perspective (Preview / Dual-Testing)
+        </p>
+        <div class="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            data-switch-partner="dyko"
+            class="switch-partner-btn rounded-xl bg-navycard border border-amberGold/30 py-2 text-xs text-parchment font-medium"
+          >
+            🌋 View as Dyko
+          </button>
+          <button
+            type="button"
+            data-switch-partner="peyton"
+            class="switch-partner-btn rounded-xl bg-navycard border border-amberGold/30 py-2 text-xs text-parchment font-medium"
+          >
+            🏔️ View as Peyton
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-2">
+        <button
+          type="button"
+          id="sign-out-btn"
+          class="rounded-xl bg-red-950/60 hover:bg-red-900/60 border border-red-400/30 px-4 py-2 text-xs text-red-200 transition"
+        >
+          Sign Out
+        </button>
+        <button
+          type="button"
+          data-close-modal="settings-modal"
+          class="rounded-xl bg-midnight/80 border border-amberGold/25 px-5 py-2 text-xs text-cream"
+        >
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODULAR APPLICATION SCRIPTS (ES6 MODULES)
+       ======================================================================== -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

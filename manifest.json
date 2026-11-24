@@ -1,0 +1,62 @@
+{
+  "name": "Under the Same Night Sky — Dyko & Peyton",
+  "short_name": "Night Sky",
+  "description": "Our private sanctuary across Calgary & La Fortuna — presence, daily rituals, letters, and our next reunion.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0B1021",
+  "theme_color": "#0B1021",
+  "lang": "en-US",
+  "categories": ["lifestyle", "social"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Send a Silent Pulse",
+      "short_name": "Send Pulse",
+      "description": "Send a warm pulse across the night sky",
+      "url": "./index.html?tab=presence",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Today's Question",
+      "short_name": "Daily Question",
+      "description": "Answer today's sealed envelope question",
+      "url": "./index.html?tab=daily",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Time Capsule Letters",
+      "short_name": "Letters",
+      "description": "Read or write a letter under the stars",
+      "url": "./index.html?tab=letters",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

@@ -1,0 +1,417 @@
+/* ============================================================================
+   "UNDER THE SAME NIGHT SKY" — CUSTOM NIGHT-SKY THEME & MICRO-INTERACTIONS
+   Dyko (La Fortuna, Costa Rica) & Peyton (Calgary, Canada)
+   ============================================================================ */
+
+:root {
+  --bg-deep: #0B1021;
+  --bg-twilight: #131B36;
+  --bg-navy: #1A2444;
+  --text-parchment: #F5EFE6;
+  --text-cream: #D6CFC2;
+  --text-muted: #9BA3B8;
+  --gold-primary: #E6B979;
+  --gold-amber: #D49A52;
+  --gold-light: #F2D5A7;
+  --border-gold: rgba(230, 185, 121, 0.16);
+  --border-gold-strong: rgba(230, 185, 121, 0.38);
+  --card-glass: rgba(19, 27, 54, 0.72);
+  --card-glass-elevated: rgba(26, 36, 68, 0.84);
+  --wax-red: #8B2E2E;
+  --wax-red-light: #B3423D;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-deep);
+  color: var(--text-parchment);
+  font-family: var(--font-sans);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(230, 185, 121, 0.10) 0%, transparent 58%),
+    radial-gradient(circle at 15% 25%, rgba(26, 36, 68, 0.85) 0%, transparent 45%),
+    radial-gradient(circle at 85% 30%, rgba(26, 36, 68, 0.75) 0%, transparent 50%),
+    linear-gradient(180deg, #070B18 0%, #0B1021 35%, #131B36 100%);
+  background-attachment: fixed;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+.font-serif-editorial {
+  font-family: var(--font-serif);
+}
+
+/* ============================================================================
+   GLASSMORPHIC NIGHT CARDS
+   ============================================================================ */
+.sky-card {
+  background: var(--card-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-gold);
+  border-radius: 1.25rem;
+  box-shadow:
+    0 12px 32px -8px rgba(4, 7, 17, 0.65),
+    inset 0 1px 0 0 rgba(242, 213, 167, 0.10);
+  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.sky-card-interactive:hover {
+  border-color: var(--border-gold-strong);
+}
+
+.sky-card-gold {
+  background: linear-gradient(
+    145deg,
+    rgba(26, 36, 68, 0.88) 0%,
+    rgba(19, 27, 54, 0.92) 100%
+  );
+  border: 1px solid rgba(230, 185, 121, 0.28);
+  box-shadow:
+    0 14px 36px -8px rgba(4, 7, 17, 0.75),
+    0 0 24px -6px rgba(230, 185, 121, 0.12),
+    inset 0 1px 0 0 rgba(242, 213, 167, 0.16);
+}
+
+/* Warm Parchment Reading Surface for Unlocked Letters */
+.parchment-surface {
+  background: linear-gradient(
+    165deg,
+    #1B233E 0%,
+    #151C33 55%,
+    #11172B 100%
+  );
+  border: 1px solid rgba(230, 185, 121, 0.34);
+  box-shadow:
+    0 20px 50px rgba(3, 5, 14, 0.85),
+    inset 0 0 42px rgba(230, 185, 121, 0.06);
+}
+
+/* ============================================================================
+   ANIMATED NIGHT SKY & CONSTELLATION HEADER
+   ============================================================================ */
+@keyframes twinkleSlow {
+  0%, 100% { opacity: 0.25; transform: scale(0.9); }
+  50% { opacity: 0.95; transform: scale(1.15); }
+}
+
+@keyframes twinkleDelayed {
+  0%, 100% { opacity: 0.85; transform: scale(1.05); }
+  50% { opacity: 0.2; transform: scale(0.85); }
+}
+
+@keyframes floatMoon {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-3px); }
+}
+
+.star-twinkle-1 {
+  animation: twinkleSlow 4.2s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.star-twinkle-2 {
+  animation: twinkleDelayed 5.4s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.star-twinkle-3 {
+  animation: twinkleSlow 3.6s ease-in-out 1.4s infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.moon-float {
+  animation: floatMoon 7s ease-in-out infinite;
+}
+
+/* Constellation Arc & Active Pulse Glow */
+#constellation-arc {
+  transition: stroke 0.5s ease, stroke-width 0.5s ease, filter 0.5s ease, opacity 0.5s ease;
+}
+
+.constellation-active #constellation-arc {
+  stroke: #F2D5A7;
+  stroke-width: 2.8;
+  opacity: 1;
+  filter: drop-shadow(0 0 8px rgba(242, 213, 167, 0.95));
+}
+
+.constellation-active .constellation-node {
+  fill: #FFF6E5;
+  filter: drop-shadow(0 0 6px rgba(242, 213, 167, 1));
+}
+
+/* Traveling Star Particle along Constellation Arc */
+#pulse-traveler {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.constellation-active #pulse-traveler {
+  opacity: 1;
+}
+
+/* ============================================================================
+   SILENT PULSE 2x2 GRID & GOLDEN RIPPLE MICRO-INTERACTION
+   ============================================================================ */
+.pulse-btn {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(155deg, rgba(26, 36, 68, 0.78) 0%, rgba(16, 23, 46, 0.88) 100%);
+  border: 1px solid rgba(230, 185, 121, 0.20);
+  border-radius: 1.15rem;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pulse-btn:hover {
+  border-color: rgba(230, 185, 121, 0.45);
+  box-shadow: 0 8px 24px -6px rgba(230, 185, 121, 0.18);
+  transform: translateY(-1px);
+}
+
+.pulse-btn:active {
+  transform: scale(0.97);
+}
+
+.pulse-btn.sending {
+  border-color: #F2D5A7;
+  box-shadow: 0 0 26px rgba(230, 185, 121, 0.38);
+}
+
+.golden-ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  background: radial-gradient(
+    circle,
+    rgba(242, 213, 167, 0.55) 0%,
+    rgba(230, 185, 121, 0.28) 50%,
+    transparent 75%
+  );
+  pointer-events: none;
+  animation: rippleExpand 0.95s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes rippleExpand {
+  0% {
+    transform: scale(0);
+    opacity: 0.95;
+  }
+  100% {
+    transform: scale(3.6);
+    opacity: 0;
+  }
+}
+
+/* ============================================================================
+   SOCIAL BATTERY SLIDER & PROGRESS BAR
+   ============================================================================ */
+.battery-track {
+  background: rgba(11, 16, 33, 0.75);
+  border: 1px solid rgba(230, 185, 121, 0.18);
+  border-radius: 999px;
+  overflow: hidden;
+  height: 0.65rem;
+}
+
+.battery-fill {
+  background: linear-gradient(90deg, #C88A3E 0%, #E6B979 60%, #F2D5A7 100%);
+  box-shadow: 0 0 12px rgba(230, 185, 121, 0.5);
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+input[type="range"].gold-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: rgba(11, 16, 33, 0.85);
+  border: 1px solid rgba(230, 185, 121, 0.24);
+  border-radius: 999px;
+  outline: none;
+}
+
+input[type="range"].gold-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #FFF6E5, #E6B979 65%, #C4863C 100%);
+  border: 2px solid #0B1021;
+  box-shadow: 0 0 12px rgba(230, 185, 121, 0.8);
+  cursor: pointer;
+}
+
+input[type="range"].gold-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #FFF6E5, #E6B979 65%, #C4863C 100%);
+  border: 2px solid #0B1021;
+  box-shadow: 0 0 12px rgba(230, 185, 121, 0.8);
+  cursor: pointer;
+}
+
+/* ============================================================================
+   WAX-SEALED ENVELOPE ILLUSTRATIONS & UNSEAL ANIMATIONS
+   ============================================================================ */
+.wax-envelope {
+  position: relative;
+  background:
+    linear-gradient(155deg, rgba(28, 39, 74, 0.92) 0%, rgba(16, 22, 44, 0.96) 100%);
+  border: 1px solid rgba(230, 185, 121, 0.28);
+  border-radius: 1.2rem;
+  overflow: hidden;
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.wax-envelope::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 74px;
+  background: linear-gradient(180deg, rgba(230, 185, 121, 0.10) 0%, transparent 100%);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  border-bottom: 1px solid rgba(230, 185, 121, 0.25);
+  pointer-events: none;
+}
+
+.wax-seal-medal {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 30%, #D99B4E 0%, #B3742B 58%, #7D4D15 100%);
+  border: 2px solid rgba(242, 213, 167, 0.65);
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.55),
+    0 0 18px rgba(230, 185, 121, 0.35),
+    inset 0 2px 4px rgba(255, 245, 224, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.wax-envelope:hover .wax-seal-medal {
+  transform: scale(1.07) rotate(-4deg);
+}
+
+@keyframes unsealReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-unseal {
+  animation: unsealReveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ============================================================================
+   BOTTOM NAVIGATION BAR (MOBILE-FIRST SAFE AREA)
+   ============================================================================ */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background: rgba(11, 16, 33, 0.90);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(230, 185, 121, 0.18);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.nav-tab-btn {
+  color: var(--text-muted);
+  transition: color 0.2s ease, transform 0.2s ease;
+  position: relative;
+}
+
+.nav-tab-btn.active {
+  color: var(--gold-light);
+}
+
+.nav-tab-btn.active::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 2.5px;
+  border-radius: 0 0 4px 4px;
+  background: linear-gradient(90deg, transparent, #F2D5A7, transparent);
+  box-shadow: 0 2px 10px rgba(242, 213, 167, 0.85);
+}
+
+/* ============================================================================
+   DATE WHEEL SPINNER
+   ============================================================================ */
+#date-wheel-rotor {
+  transition: transform 4.2s cubic-bezier(0.14, 0.88, 0.18, 1);
+  will-change: transform;
+}
+
+/* ============================================================================
+   CUSTOM SCROLLBAR & UTILITY HELPERS
+   ============================================================================ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(11, 16, 33, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(230, 185, 121, 0.28);
+  border-radius: 999px;
+}
+
+.tab-panel {
+  display: none;
+}
+
+.tab-panel.active {
+  display: block;
+  animation: fadeInTab 0.32s ease-out;
+}
+
+@keyframes fadeInTab {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
